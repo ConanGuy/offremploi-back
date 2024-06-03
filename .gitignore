@@ -21,3 +21,6 @@ __pycache__/
 errors/
 db/
 downloaded_files/
+logs/
+
+run*.bat
