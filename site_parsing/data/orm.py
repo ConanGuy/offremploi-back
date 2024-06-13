@@ -1,4 +1,4 @@
-from .sql import BaseModel, OfferModel, SiteModel
+from .sql import BaseModel, FilterModel, OfferGroupModel, OfferModel, SiteModel
 
 from datetime import date
 
@@ -28,8 +28,8 @@ class Base:
         return attrs
     
     @classmethod
-    def get_all(cls):        
-        return [cls.from_model(model) for model in cls.classmodel.get_all()]
+    def get_all(cls, filters: dict = {}):        
+        return [cls.from_model(model) for model in cls.classmodel.get_all(filters)]
     @classmethod
     def get_by_id(cls, id: int):        
         return cls.from_model(cls.classmodel.get_by_id(id))  
@@ -79,6 +79,11 @@ class Site(Base):
     name: str
     url: str
     is_filtered: bool
+    
+class OfferGroup(Base):
+    classmodel = OfferGroupModel
+    
+    name: str
 
 class Offer(Base):
     classmodel = OfferModel
@@ -90,10 +95,44 @@ class Offer(Base):
     date_publication: date
     location: str
     job_id: str
+    offer_group: OfferGroup
     
-if __name__ == "__main__":
-    site = Site.get_by_id(1)
+    def exists(self) -> bool:
+        existing_offers: list[Offer] = [offer for offer in Offer.get_all({"site_id": (self.site.id)})]
+        attributes: list[str] = [attr for attr in Offer.get_attributes() if attr != "id"]
+        
+        for existing_offer in existing_offers:
+            if self.job_id != None and self.job_id == existing_offer.job_id:
+                return True
+            
+            if all([self.__getattribute__(attr) == existing_offer.__getattribute__(attr) for attr in attributes]):
+                return True
+        
+        return False
     
-    site.add()
+class Filter(Base):
+    classmodel = FilterModel
     
+    offer_group: OfferGroup
+    key: str
+    value: str
     
+def get_filters():    
+    groups = {}
+    for filter in Filter.get_all():
+        if filter.offer_group.id not in groups:
+            groups[filter.offer_group.id] = {}
+        
+        if filter.key not in groups[filter.offer_group.id]:
+            groups[filter.offer_group.id][filter.key] = ()
+        groups[filter.offer_group.id][filter.key] += (filter.value,)
+        
+    return groups
+
+def test():
+    print("Testing ORM")
+    
+    for offer in Offer.get_all():
+        print(offer)
+    
+    print("End testing ORM")
