@@ -1,8 +1,10 @@
 from django.db import models
 
 from .site import Site
+from .offer_group import OfferGroup
 
 class Offer(models.Model):
+    offer_group = models.ForeignKey(OfferGroup, on_delete=models.CASCADE, related_name='offers', null=False)
     date_insertion = models.DateField(auto_now_add=True, null=False)
     lu = models.BooleanField(auto_created=True, default=False, null=False)
     title = models.CharField(max_length=255, null=False)

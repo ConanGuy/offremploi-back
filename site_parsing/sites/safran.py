@@ -1,5 +1,4 @@
-from data.orm import Offer
-from data.orm import Site
+from site_parsing.data.orm import Offer, OfferGroup, Site
 
 from ._parser import SiteParser
 
@@ -8,9 +7,20 @@ from datetime import datetime
 
 class SafranParser(SiteParser):
     
-    url: str = "https://www.safran-group.com/fr/offers?countries%5B0%5D=1002-france&regions_states%5B0%5D=33-ile-france&search=Python&contracts%5B0%5D=9-cdi&job_status%5B0%5D=3940-ingenieur-cadre&experiences%5B0%5D=3502-jeune-diplome-epremiere-experience&experiences%5B1%5D=6-superieure-3-ans&sort=date&items_per_page=All"
+    site: Site = Site.get_by_id(0)
+    url: str = site.url
     
-    def get_offers(self) -> list[Offer]:
+    def get_offers(self, filters: dict = {}) -> list[Offer]:
+        offer_group_id = list(filters.keys())[0]                
+        offer_group = OfferGroup.get_by_id(offer_group_id)
+        filter: dict = filters[offer_group_id]
+        
+        keywords = filter.get("keyword", ())
+        states = filter.get("state", ())
+        
+        if offer_group_id != 0:
+            return []
+        
         driver = self.driver
         
         driver.get(self.url)
@@ -33,16 +43,19 @@ class SafranParser(SiteParser):
             contract = offer.find('span', class_='icon-file1').parent.text.strip()
             domain = offer.find('span', class_='icon-tags').parent.text.strip()
 
-            job_offers.append(
-                Offer(
-                    site = Site.get_by_id(0),
-                    title = title,
-                    description = None,
-                    url = link,
-                    date_publication = datetime.strptime(date, "%d.%m.%Y").date(),
-                    location = location,
-                    job_id = link.split("-")[-1],
-                )
+            offer_ = Offer(
+                site = Site.get_by_id(0),
+                title = title,
+                description = None,
+                url = link,
+                date_publication = datetime.strptime(date, "%d.%m.%Y").date(),
+                location = location,
+                job_id = link.split("-")[-1],
+                offer_group = offer_group,
             )
+            
+            if not offer_.exists():
+                job_offers.append(offer_)
+                
         return job_offers
         

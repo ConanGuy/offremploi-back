@@ -62,29 +62,48 @@ class BaseModel:
             del attrs["table"]
             
         return attrs
-    
+
     @classmethod
-    def get_all(cls):
+    def get_all(cls, filters: dict = {}):
         if cls == BaseModel:
-            raise Exception("Cannot read SQL for class `Base`")
+            raise Exception("Cannot read SQL for class `BaseModel`")
         
-        columns = (cls.get_attributes().keys())
+        columns = cls.get_attributes().keys()
         table = cls.table
-        query = f""" SELECT {', '.join(columns)} FROM {table}"""
+        query = f"""SELECT {', '.join(columns)} FROM {table}"""
+
+        params = ()
+        if filters:
+            query += " WHERE "
+
+            for key, values in filters.items():
+                if key not in columns:
+                    continue
+                
+                if not isinstance(values, tuple):
+                    values = (values,)
+
+                query += f"{key} IN ({', '.join(['?' for _ in values])}) AND "
+                params += values
+            
+            query = query[:-5]
         
-        result = SqlEngine.select(query)
+        result = SqlEngine.select(query, params)
         ret = []
         for e in result:
             obj = cls()
             for col, val in zip(columns, e):
-                if cls.get_attributes()[col] == date and val is not None:
+                if val is None:
+                    obj.__setattr__(col, val)
+                elif cls.get_attributes()[col] == date and val is not None:
                     obj.__setattr__(col, datetime.strptime(val[:10], "%Y-%m-%d").date())
                 elif cls.get_attributes()[col] == datetime and val is not None:
                     obj.__setattr__(col, datetime.strptime(val[:10], "%Y-%m-%d"))
                 else:
-                    obj.__setattr__(col, val)
+                    obj.__setattr__(col, cls.get_attributes()[col](val))
+                    
             ret.append(obj)
-        return ret 
+        return ret
     
     @classmethod
     def get_by_id(cls, id: int):
@@ -100,12 +119,14 @@ class BaseModel:
         
         obj = cls()
         for col, val in zip(columns, result):
-            if cls.get_attributes()[col] == date:
+            if val is None:
+                obj.__setattr__(col, val)
+            elif cls.get_attributes()[col] == date and val is not None:
                 obj.__setattr__(col, datetime.strptime(val[:10], "%Y-%m-%d").date())
             elif cls.get_attributes()[col] == datetime and val is not None:
                 obj.__setattr__(col, datetime.strptime(val[:10], "%Y-%m-%d"))
             else:
-                obj.__setattr__(col, str(val))
+                obj.__setattr__(col, cls.get_attributes()[col](val))
             
         return obj 
     
@@ -141,3 +162,16 @@ class OfferModel(BaseModel):
     date_publication: date
     location: str
     job_id: str
+    offer_group_id: int
+    
+class OfferGroupModel(BaseModel):
+    table: str = "api_offergroup"
+    
+    name: str
+    
+class FilterModel(BaseModel):
+    table: str = "api_filter"
+    
+    offer_group_id: int
+    key: str
+    value: str
