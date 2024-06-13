@@ -1,3 +1,4 @@
+from api.serializers.offer_group import OfferGroupSerializer
 from api.serializers.site import SiteSerializer
 
 from ..models import Offer
@@ -6,6 +7,7 @@ from rest_framework import serializers
 
 class OfferSerializer(serializers.ModelSerializer):
     site = SiteSerializer(read_only=True)
+    offer_group = OfferGroupSerializer(read_only=True)
     
     class Meta:
         model = Offer
