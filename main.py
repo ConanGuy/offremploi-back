@@ -9,7 +9,7 @@ def run(site, filters: dict = {}):
         parser: SiteParser = site()
         offers = parser.get_offers_(filters)
         
-        # parser.add_offers(offers)
+        parser.add_offers(offers)
     except Exception as e:
         print(f"An error occurred while adding offers from {str(site.__name__).replace('Parser', '')}")
         error_filename = f"./errors/error_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}_{str(site.__name__).replace('Parser', '')}.log"

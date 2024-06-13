@@ -17,13 +17,7 @@ class SiteParser:
         for offer_group_id, filters in offer_groups.items():
             new_offers = self.get_offers({offer_group_id: filters})
             offers += new_offers
-            print(f"Found {len(new_offers)} offers for {self.__class__.__name__} (filter: {OfferGroup.get_by_id(offer_group_id).name})")
-            
-        
-            for offer in offers:
-                if offer.offer_group.id == 1:
-                    print(offer)
-                
+            print(f"Found {len(new_offers)} offers for {self.__class__.__name__} (filter: {OfferGroup.get_by_id(offer_group_id).name})")                
         return offers
     
     def get_offers(self, *args, **kwargs): ...

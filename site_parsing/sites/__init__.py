@@ -13,24 +13,14 @@ from .thales import ThalesParser
 
 # List of all parsers
 PARSERS = [
-    ## Done
-
-    # BouyguesParser,
-    # DanoneParser,
-    # DassaultParser,
-    # EDFParser,
-    # ExpleoParser,
-    # IndeedParser,
-    # MBDAParser,
-    # OrangeParser,
+    BouyguesParser,
+    DanoneParser,
+    DassaultParser,
+    EDFParser,
+    ExpleoParser,
+    IndeedParser,
+    MBDAParser,
+    OrangeParser,
     SafranParser,
-
-
-    ## Doing
-    
     ThalesParser,
-    
-    
-    ## To do
-    
 ]
