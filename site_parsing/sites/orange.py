@@ -29,6 +29,7 @@ class OrangeParser(SiteParser):
             
             coordinates += ((latmin, latmax, lngmin, lngmax),)
         
+        job_offers = []
         for coordinate in coordinates:
             latmin, latmax, lngmin, lngmax = coordinate
             
@@ -56,7 +57,6 @@ class OrangeParser(SiteParser):
             response = requests.post(self.url, json=payload, headers=headers)
             data: dict|list = response.json()
 
-            job_offers = []
             for job in data.get("items", []):
                 offer = Offer(
                     site=self.site,

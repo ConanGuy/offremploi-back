@@ -20,6 +20,7 @@ class MBDAParser(SiteParser):
         if "Hauts-de-Seine" not in states:
             return []
             
+        job_offers = []
         for keyword in keywords:
             driver = self.driver
             
@@ -33,7 +34,6 @@ class MBDAParser(SiteParser):
             # Trouver toutes les offers d'emploi
             offers = soup.find_all('li', class_='jobs-list__results-list-item')
 
-            job_offers = []
 
             for offer in offers:
                 title_element = offer.find('a')
