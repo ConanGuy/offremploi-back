@@ -15,7 +15,9 @@ class EDFParser(SiteParser):
         filter: dict = filters[offer_group_id]
         
         keywords = filter.get("keyword", ())
+        accents = ['é', 'è', 'ê', 'à', 'ç', 'ù', 'û', 'ô', 'î', 'ï', 'â', 'ä', 'ö', 'ë', 'ü']
         states = (state.replace('-', '')+self.departement_from_nom(state)['code'] for state in filter.get("state", ()))
+        states = (state.replace(accents[i], '') for state in states for i in range(len(accents)) if accents[i] in state)
                 
         # Get all possible combinantions of filters with keywords and states
         filters_combinations = []
