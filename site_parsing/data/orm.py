@@ -137,7 +137,7 @@ def get_filters():
                     groups[group][key] = ()
                 groups[group][key] += values
     
-    print(groups)    
+        del groups[-1]
     
     return groups
 
