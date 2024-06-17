@@ -64,7 +64,10 @@ class SiteParser:
             url = f"https://geo.api.gouv.fr/departements?nom={nom.lower()}&format=json"
             response = requests.get(url)
             data = json.loads(response.text)
-            return data[0]
+            for d in data:
+                if d["nom"].lower() == nom.lower():
+                    return d
+            return None
         except:
             return None
     
