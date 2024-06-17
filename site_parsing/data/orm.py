@@ -127,6 +127,18 @@ def get_filters():
             groups[filter.offer_group.id][filter.key] = ()
         groups[filter.offer_group.id][filter.key] += (filter.value,)
         
+    if -1 in groups:
+        for key, values in groups[-1].items():
+            for group in groups:
+                if group == -1:
+                    continue
+                
+                if key not in groups[group]:
+                    groups[group][key] = ()
+                groups[group][key] += values
+    
+    print(groups)    
+    
     return groups
 
 def test():
