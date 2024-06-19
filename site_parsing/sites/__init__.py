@@ -5,6 +5,7 @@ from .danone import DanoneParser
 from .dassault import DassaultParser
 from .edf import EDFParser
 from .expleo import ExpleoParser
+from .hellowork import HelloWorkParser
 from .indeed import IndeedParser
 from .mbda import MBDAParser
 from .orange import OrangeParser
@@ -18,6 +19,7 @@ PARSERS = [
     DassaultParser,
     EDFParser,
     ExpleoParser,
+    HelloWorkParser,
     IndeedParser,
     MBDAParser,
     OrangeParser,
