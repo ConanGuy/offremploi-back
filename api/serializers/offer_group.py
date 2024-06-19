@@ -1,5 +1,3 @@
-from api.serializers.site import SiteSerializer
-
 from ..models import OfferGroup
 
 from rest_framework import serializers
