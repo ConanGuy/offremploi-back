@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
+from .views import SiteListCreate, SiteRetrieve, OfferListCreate, OfferRetrieve, OfferRead, OfferGroupList, OfferGroupRetrieveWithOffers, OfferGroupRetrieve
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -32,9 +33,12 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('api/sites/', SiteCreate.as_view(), name='site_list_create'),
+    path('api/sites/', SiteListCreate.as_view(), name='site_list_create'),
     path('api/sites/<int:pk>/', SiteRetrieve.as_view(), name='site_detail'),
     path('api/offers/', OfferListCreate.as_view(), name='offre_list_create'),
     path('api/offers/<int:pk>/', OfferRetrieve.as_view(), name='offre_detail'),
     path('api/offers/<int:pk>/read/', OfferRead.as_view(), name='offer_read'),
+    path('api/offergroups/', OfferGroupList.as_view(), name='offer_groups'),
+    path('api/offergroups/<int:pk>/', OfferGroupRetrieve.as_view(), name='offer_groups_detail'),
+    path('api/offergroups/<int:pk>/offers/', OfferGroupRetrieveWithOffers.as_view(), name='offer_groups_with_offers'),
 ]
