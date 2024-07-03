@@ -1,5 +1,6 @@
 from ._parser import SiteParser
 
+from .airbus import AirbusParser
 from .bouygues import BouyguesParser
 from .danone import DanoneParser
 from .dassault import DassaultParser
@@ -14,6 +15,7 @@ from .thales import ThalesParser
 
 # List of all parsers
 PARSERS = [
+    AirbusParser,
     BouyguesParser,
     DanoneParser,
     DassaultParser,
