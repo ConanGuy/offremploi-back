@@ -30,6 +30,7 @@ class AirbusParser(SiteParser):
         if len(states_filtered) == 0:
             return []    
 
+        job_offers = []
         for keyword in keywords:
             payload = {
                 "appliedFacets": {
@@ -50,7 +51,6 @@ class AirbusParser(SiteParser):
             response = requests.post(self.url, json=payload)
             data = response.json()
 
-            job_offers = []
             for job in data["jobPostings"]:
                 offer = Offer(
                     site=self.site,

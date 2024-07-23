@@ -19,6 +19,7 @@ class ThalesParser(SiteParser):
         keywords = filter.get("keyword", ())
         states = filter.get("state", ())
         
+        job_offers = []
         for keyword in keywords:
             payload = {
                 "lang": "fr_fr",
@@ -63,7 +64,6 @@ class ThalesParser(SiteParser):
             response = requests.post(self.url, json=payload, headers=headers)
             data = response.json()
 
-            job_offers = []
             for job in data["refineSearch"]["data"]["jobs"]:
                 offer = Offer(
                     site=self.site,
